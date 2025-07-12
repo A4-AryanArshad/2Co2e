@@ -6,8 +6,8 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: 'aryanarshad5413@gmail.com',
+    pass: 'gvyqmapsqsrrtwjm',
   },
 });
 
@@ -22,8 +22,8 @@ router.post('/', async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_TO,
+      from: 'aryanarshad5413@gmail.com',
+      to: 'aryanarshad5413@gmail.com',
       replyTo: email, // user's email
       subject: `[Contact Form] ${subject}`,
       text: `Name: ${name}\nEmail: ${email}\n\n${message}`,

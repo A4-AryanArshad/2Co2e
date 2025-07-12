@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // JWT Secret from environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_jwt_secret';
+const JWT_SECRET = 'this_is_a_secure_jwt_secret_123456';
 
 // Signup Route
 router.post('/signup', async (req, res) => {

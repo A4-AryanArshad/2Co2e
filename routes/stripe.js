@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = Stripe('');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // JWT Secret from environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_jwt_secret';
+const JWT_SECRET = 'this_is_a_secure_jwt_secret_123456';
 
 // POST /api/create-checkout-session
 router.post('/create-checkout-session', async (req, res) => {
