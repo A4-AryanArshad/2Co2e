@@ -1,14 +1,12 @@
-// server/app.js
-
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const serverless = require('serverless-http');
 
-// Route Imports
-const authRoutes = require('../routes/auth');
 const cardRoutes = require('../routes/cardRoutes');
+const authRoutes = require('../routes/auth');
 const newsRoutes = require('../routes/newsRoutes');
 const blogRoutes = require('../routes/blogRoutes');
 const courseRoutes = require('../routes/courseRoutes');
@@ -20,11 +18,12 @@ const contactRoutes = require('../routes/contactRoutes');
 
 const app = express();
 
-// Middleware
+// CORS
 app.use(cors({
   origin: true,
-  credentials: true
+  credentials: true,
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -40,21 +39,14 @@ app.use('/api/directory', directoryRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/contact', contactRoutes);
 
-// MongoDB Connection (run once only)
-let isConnected = false;
-async function connectDB() {
-  if (isConnected) return;
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    console.log("Connected to MongoDB");
-    isConnected = true;
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-  }
-}
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch((err) => console.error('MongoDB connection failed:', err));
 
 // Export for Vercel
-module.exports = { app, connectDB };
+module.exports = app;
+module.exports.handler = serverless(app);
