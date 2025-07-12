@@ -1,11 +1,14 @@
+// server/app.js
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const cardRoutes = require('../routes/cardRoutes');
 
+// Route Imports
 const authRoutes = require('../routes/auth');
+const cardRoutes = require('../routes/cardRoutes');
 const newsRoutes = require('../routes/newsRoutes');
 const blogRoutes = require('../routes/blogRoutes');
 const courseRoutes = require('../routes/courseRoutes');
@@ -17,12 +20,11 @@ const contactRoutes = require('../routes/contactRoutes');
 
 const app = express();
 
-// CORS middleware - must be before any routes or express.json()
+// Middleware
 app.use(cors({
   origin: true,
-   credentials: true
- }));
-
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -38,16 +40,21 @@ app.use('/api/directory', directoryRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/contact', contactRoutes);
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB');
-  const PORT = process.env.PORT || 5001;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-})
-.catch((err) => console.error('MongoDB connection failed:', err));
+// MongoDB Connection (run once only)
+let isConnected = false;
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log("Connected to MongoDB");
+    isConnected = true;
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+  }
+}
+
+// Export for Vercel
+module.exports = { app, connectDB };
